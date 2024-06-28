@@ -37,8 +37,8 @@ class product(db.Model):
     flash_sale = db.Column(db.Boolean, default=False)
     date_added = db.Column(db.DateTime(), default=datetime.utcnow)
 
-    carts = db.realtionship('Cart', backref=db.backref('product', lazy=True))
-    orders = db.realtionship('Order', backref=db.backref('product', lazy=True))
+    carts = db.relationship('Cart', backref=db.backref('product', lazy=True))
+    orders = db.relationship('Order', backref=db.backref('product', lazy=True))
     def __str__(self):
         return '<Product %r>' % self.product_name
 

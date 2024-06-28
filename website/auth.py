@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, flash, redirect
 from .forms import LoginForm, SignUpForm
 from .models import Customer
+from flask_login import login_user, login_required, logout_user
 
 auth = Blueprint('auth', __name__)
 
@@ -25,7 +26,7 @@ def sign_up():
                 flash('Account Created Successfully, You can now login')
                 return redirect('/login')
 
-            except Expetion as e:
+            except Excpetion as e:
                 print(e)
                 flash('Account not created!!, Email already exists')
 
@@ -34,10 +35,30 @@ def sign_up():
             form.password1.data = ''
             form.password2.data = ''
 
-    return render_template('login.html', form=form)
+    return render_template('signup.html', form=form)
 
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    return render_template('signup.html', form=form) 
+    if form.validate_on_submit():
+        email = form.email.data
+        password = form.password.data
+
+        customer = Customer.query.filter_by(email=email).first()
+
+        if customer:
+            if customer.verify_password(password=password):
+                login_user(customer)
+                redirect('/')
+            else:
+                flash('Incorrect Email or Password')
+    else:
+        flash('Account does not exist please sign up')
+    return render_template('login.html', form=form)
+
+@auth.route('/logout', methods=['GET', 'POST'])
+@login_required
+def log_out():
+    logout_user()
+    return redirect('/')
