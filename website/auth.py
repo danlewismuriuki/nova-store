@@ -14,6 +14,7 @@ def sign_up():
         password1 = form.password1.data
         password2 = form.password2.data
 
+
         if password1 == password2:
             new_customer = Customer()
             new_customer.email = email
@@ -50,7 +51,7 @@ def login():
         if customer:
             if customer.verify_password(password=password):
                 login_user(customer)
-                redirect('/')
+                return redirect('/')
             else:
                 flash('Incorrect Email or Password')
     else:
