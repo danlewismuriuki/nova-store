@@ -60,6 +60,8 @@ class Order(db.Model):
     payment_id = db.Column(db.String(1000), nullable=False)
 
     customer_link = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
+    product_link = db.Column(db.Integer, db.Foreignkey('customer.id'), nullable=False)
 
+    
     def __str__(self):
         return '<Order %r>' % self.id

@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, flash, redirect
-from .forms import LoginForm, SignUpForm
+from .forms import LoginForm, SignUpForm, PasswordChangeForm
 from .models import Customer
 from flask_login import login_user, login_required, logout_user
-
+from . import db
 auth = Blueprint('auth', __name__)
 
 @auth.route('/sign-up', methods=['GET', 'POST'])
@@ -27,7 +27,7 @@ def sign_up():
                 flash('Account Created Successfully, You can now login')
                 return redirect('/login')
 
-            except Excpetion as e:
+            except Exception as e:
                 print(e)
                 flash('Account not created!!, Email already exists')
 
@@ -63,3 +63,33 @@ def login():
 def log_out():
     logout_user()
     return redirect('/')
+
+@auth.route('/profile/<int:customer_id>')
+@login_required
+def profile(customer_id):
+    customer = Customer.query.get(customer.id)
+    return render_template('profile.html', customer=customer)
+
+@auth.route('/change-password/<int:customer_id>', methods=['GET', 'POST'])
+@login_required
+def change_password(customer_id):
+    form = PasswordChangeForm()
+    customer = Customer.query.get(customer_id)
+    if form.validate_on_submit():
+        current_password = form.current_password.data
+        new_password = form.current_password.data
+        confirm_new_password = form.current_password.data
+
+        if customer.verify_password(current_password):
+            if new_password == confirm_new_password:
+                customer.password = confirm_new_password
+                db. session.commit()
+                flash('Password Updated Successfully')
+                return redirect(f'/profile/{customer.id}')
+            else:
+                flash('New Password does not match!!!')
+
+        else:
+            flash('Current Password is Incorrect')
+            
+    return render_template('change_password.html', form=form)
