@@ -75,10 +75,11 @@ def profile(customer_id):
 def change_password(customer_id):
     form = PasswordChangeForm()
     customer = Customer.query.get(customer_id)
+
     if form.validate_on_submit():
         current_password = form.current_password.data
-        new_password = form.current_password.data
-        confirm_new_password = form.current_password.data
+        new_password = form.new_password.data
+        confirm_new_password = form.confirm_new_password.data
 
         if customer.verify_password(current_password):
             if new_password == confirm_new_password:
