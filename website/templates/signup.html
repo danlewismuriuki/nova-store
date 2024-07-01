@@ -10,8 +10,10 @@
             <h3>
                 create an account <br> to shop
             </h3>
+
             <hr class="first">
-            <form method="POST"></form>
+
+            <form method="POST">
                 {{ form.hidden_tag() }}
 
                 <div class="email"><h4>Email Address</h4>{{ form.email }}</div>
@@ -23,6 +25,8 @@
                     <a href="/login">Login</a>
                     {{ form.submit() }}
                 </div>
+            </form>
+
         </div>
     </div>
 </section>
