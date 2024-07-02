@@ -68,6 +68,7 @@ def log_out():
 @login_required
 def profile(customer_id):
     customer = Customer.query.get(customer_id)
+    print('CUSTOMER ID:', customer_id)
     return render_template('profile.html', customer=customer)
 
 @auth.route('/change-password/<int:customer_id>', methods=['GET', 'POST'])
