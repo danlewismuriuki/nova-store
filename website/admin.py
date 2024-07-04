@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, flash
+from flask import Blueprint, render_template, flash, send_from_directory
 from flask_login import login_required, current_user
 from .forms import ShopItemsForm
 from werkzeug.utils import secure_filename
@@ -58,4 +58,21 @@ def shop_items():
     if current_user.id == 1:
         items = Product.query.order_by(Product.date_added).all()
         return render_template('shop_items.html', items=items)
-    return render_template('404.ht@admin.route('/media/<path:filename>')
+    return render_template('404.html')
+
+@admin.route('/update-item/<int:item_id>', methods=['GET', 'POST'])
+@login_required
+def update_item(item_id):
+    if current_user.id == 1:
+        form = ShopItemsForm()
+        item_to_update = Product.query.get(item_id)
+
+        form.product_name.render_kw = {'placeholder': item_to_update.product_name}
+        form.previous_price.render_kw = {'placeholder': item_to_update.previous_price}
+        form.current_price.render_kw = {'placeholder': item_to_update.current_price}
+        form.in_stock.render_kw = {'placeholder': item_to_update.in_stock}
+        form.flash_sale.render_kw = {'placeholder': item_to_update.flash_sale}
+
+
+        return render_template('update_item.html', form=form)
+    return render_template('404.html')
