@@ -47,3 +47,11 @@ def add_shop_items():
         return render_template('add_shop_items.html', form=form)
 
     return render_template('404.html')
+
+@admin.route('/shop-items', methods=['GET', 'POST'])
+@login_required
+def shop_items():
+    if current_user.id == 1:
+        items = Product.query.order_by(Product.date_added).all()
+        return render_template('shop_items.html', items=items)
+    return render_template('404.html')
