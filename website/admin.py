@@ -73,6 +73,19 @@ def update_item(item_id):
         form.in_stock.render_kw = {'placeholder': item_to_update.in_stock}
         form.flash_sale.render_kw = {'placeholder': item_to_update.flash_sale}
 
+        if form.validate_on_submit():
+            product_name = form.product_name.data
+            current_price = form.current_price.data
+            previous_price = form.previous_price.data
+            in_stock = form.in_stock.data
+
+            flash_sale = form.flash_sale.data
+
+            file_name = secure_filename(file.name)
+            file_path = f'media/{file_name}'
+
+            file.save(file_path)
+
 
         return render_template('update_item.html', form=form)
     return render_template('404.html')
