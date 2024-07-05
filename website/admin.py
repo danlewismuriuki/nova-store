@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, flash, send_from_directory
+from flask import Blueprint, render_template, flash, send_from_directory, redirect
 from flask_login import login_required, current_user
 from .forms import ShopItemsForm
 from werkzeug.utils import secure_filename
@@ -65,6 +65,7 @@ def shop_items():
 def update_item(item_id):
     if current_user.id == 1:
         form = ShopItemsForm()
+
         item_to_update = Product.query.get(item_id)
 
         form.product_name.render_kw = {'placeholder': item_to_update.product_name}
@@ -78,13 +79,30 @@ def update_item(item_id):
             current_price = form.current_price.data
             previous_price = form.previous_price.data
             in_stock = form.in_stock.data
-
             flash_sale = form.flash_sale.data
+
+            file = form.product_picture.data
 
             file_name = secure_filename(file.name)
             file_path = f'media/{file_name}'
 
             file.save(file_path)
+
+            try:
+                Product.query.filter_by(id=item_id).update(dict(product_name=product_name,
+                                                                current_price=current_price,
+                                                                previous_price=previous_price,
+                                                                in_stock=in_stock,
+                                                                flash_sale=flash_sale,
+                                                                product_picture=file_path))
+
+                db.session.commit()
+                flash(f'{product_name} updated Successfully')
+                print('Product Updated')
+                return redirect('/shop-items')
+            except Exception as e:
+                print('Product not Updated')
+                flash('Item Not Updated')
 
 
         return render_template('update_item.html', form=form)
