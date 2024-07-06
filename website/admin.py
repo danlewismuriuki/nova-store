@@ -83,8 +83,8 @@ def update_item(item_id):
 
             file = form.product_picture.data
 
-            file_name = secure_filename(file.name)
-            file_path = f'media/{file_name}'
+            file_name = secure_filename(file.filename)
+            file_path = f'./media/{file_name}'
 
             file.save(file_path)
 
@@ -101,7 +101,7 @@ def update_item(item_id):
                 print('Product Updated')
                 return redirect('/shop-items')
             except Exception as e:
-                print('Product not Updated')
+                print('Product not Updated', e)
                 flash('Item Not Updated')
 
 
