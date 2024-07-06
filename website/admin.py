@@ -107,3 +107,21 @@ def update_item(item_id):
 
         return render_template('update_item.html', form=form)
     return render_template('404.html')
+
+@admin.route('/delete-item/<int:item_id>', methods=['GET', 'POST'])
+@login_required
+def delete_item(item_id):
+    if current_user.id == 1:
+        try:
+            item_to_delete = Product.query.get(item_id)
+            db.session.delete(item_to_delete)
+            db.session.commit()
+            flash('One Item deleted')
+            return redirect('/shop-items')
+
+        except Exception as e:
+            print('Item not deleted', e)
+            flash('Item not deleted!!!')
+        return redirect('/shop-items')
+
+    return render_template('404.html')
