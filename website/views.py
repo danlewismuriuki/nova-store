@@ -9,7 +9,8 @@ def home():
 
     items = Product.query.filter_by(flash_sale=True)
 
-    return render_template('home.html', items=items)
+    return render_template('home.html', items=items, cart=Cart.query.filter_by(customer_link=current_user.id).all()
+                           if current_user.is_authenticated else[])
 
 @views.route('/add-to-cart/<int:item_id>')
 @login_required
