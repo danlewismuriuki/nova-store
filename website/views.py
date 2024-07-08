@@ -43,10 +43,10 @@ def add_to_cart(item_id):
         flash(f'{new_cart_item.product.product_name} has not been added to cart')
     return redirect(request.referrer)
 
-@views.route('/')
+@views.route('/cart')
 @login_required
 def show_cart():
-    cart = Cart.query.filter_by(customer_link=current_current_user.id).all()
+    cart = Cart.query.filter_by(customer_link=current_user.id).all()
     amount = 0
     for item in cart:
         amount += item.product.current_price * item.quantity
