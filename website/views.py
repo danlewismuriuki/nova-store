@@ -61,13 +61,15 @@ def plus_cart():
         cart_item.quantity = cart_item.quantity + 1
         db.session.commit()
 
+        cart = Cart.query.filter_by(customer_link=current_user.id).all()
+
         amount = 0
 
         for item in cart:
-            amount += item.product.current_price * quantity
+            amount += item.product.current_price * item.quantity
         data = {
-                'quantity': cart_item.quantity
-                'amount': amount
+                'quantity': cart_item.quantity,
+                'amount': amount,
                 'total' : amount + 200
         }
         return jsonify(data)
@@ -76,18 +78,21 @@ def plus_cart():
 @views.route('/minuscart')
 @login_required
 def minus_cart():
-if request.method == 'GET':
-    cart_id = request.args.get('cart_id')
-    cart_item = Cart.query.get(cart_id)
-    cart_item.quantity = cart_item.quantity - 1
-    db.session.commit()
-    amount = 0
+    if request.method == 'GET':
+        cart_id = request.args.get('cart_id')
+        cart_item = Cart.query.get(cart_id)
+        cart_item.quantity = cart_item.quantity - 1
+        db.session.commit()
 
-    for item in cart:
-        amount += item.product.current_price * quantity
+        cart = Cart.query.filter_by(customer_link=current_user.id).all()
+
+        amount = 0
+        
+        for item in cart:
+            amount += item.product.current_price * item.quantity
         data = {
-                'quantity': cart_item.quantity
-                'amount': amount
+                'quantity': cart_item.quantity,
+                'amount': amount,
                 'total' : amount + 200
                 }
-    return jsonify(data)
+        return jsonify(data)
