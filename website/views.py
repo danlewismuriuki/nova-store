@@ -51,3 +51,23 @@ def show_cart():
     for item in cart:
         amount += item.product.current_price * item.quantity
         return render_template('cart.html', cart=cart, amount=amount, total=amount+200)
+
+@views.route('/pluscart')
+@login_required
+def plus_cart():
+    if request.method == 'GET':
+        cart_id = request.args.get('cart_id')
+        cart_item = cart.query.get(cart_id)
+        cart_item.quantity = cart_item.quantity + 1
+        db.session.commit()
+
+        amount = 0
+
+        for item in cart:
+            amount += item.product.current_price * quantity
+        data = {
+                'quantity': cart_item.quantity
+                'amount': amount
+                'total' : amount + 200
+        }
+        return jsonfiy(data)
