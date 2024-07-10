@@ -103,6 +103,8 @@ def remove_cart():
     if request.method == 'GET':
         cart_id = request.args.get('cart_id')
         cart_item = Cart.query.get(cart_id)
+
+        db.session.delete(cart_item)
         db.session.commit()
 
         cart = Cart.query.filter_by(customer_link=current_user.id).all()
@@ -111,9 +113,9 @@ def remove_cart():
 
         for item in cart:
             amount += item.product.current_price * item.quantity
-            data = {
-                    'quantity': cart_item.quantity,
-                    'amount': amount,
-                    'total' : amount + 200
-            }
-            return jsonify(data)
+        data = {
+                'quantity': cart_item.quantity,
+                'amount': amount,
+                'total' : amount + 200
+        }
+        return jsonify(data)
