@@ -2,5 +2,5 @@ flask
 flask-login
 flask-sqlalchemy
 Flask-WTF
-instasend-python
+intasend-python
 gunicorn
