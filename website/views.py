@@ -131,41 +131,42 @@ def remove_cart():
 def place_order():
     customer_cart = Cart.query.filter_by(customer_links=current_user.id)
     if customer_cart:
-        total = 0
-        for item in customer_cart:
-            total += item.product.current_price * item.quantity
+        try:
+            total = 0
+            for item in customer_cart:
+                total += item.product.current_price * item.quantity
 
-        service = APIService(token=API_TOKEN, publishable_key=PUBLISHABLE_KEY, test=True)
-        create_order_response = service.collect.mpesa_stk_push(phone_number=+254746106100, email=current_user.email,
-                                                                amount=total + 200, narrative='Purchase of goods')
-        for item in customer_cart:
-            new_order = Order()
-            new_order.quantity = item.quantity
-            new_order.price = item.product.current_price
-            new_order.status = create_order_response['invoice']['state'].capitalize()
-            new_order.payment_id = create_order_response['id']
+            service = APIService(token=API_TOKEN, publishable_key=API_PUBLISHABLE_KEY, test=True)
+            create_order_response = service.collect.mpesa_stk_push(phone_number=+254746106100, email=current_user.email,
+                                                                    amount=total + 200, narrative='Purchase of goods')
+            for item in customer_cart:
+                new_order = Order()
+                new_order.quantity = item.quantity
+                new_order.price = item.product.current_price
+                new_order.status = create_order_response['invoice']['state'].capitalize()
+                new_order.payment_id = create_order_response['id']
 
-            new_order.product_link = item.product_link
-            new_order.customer_link = item.customer_link
+                new_order.product_link = item.product_link
+                new_order.customer_link = item.customer_link
 
-            db.session.add(new_order)
+                db.session.add(new_order)
 
-            product = Product.query.get(item.product_link)
+                product = Product.query.get(item.product_link)
 
-            product.in.stock -= item.quantity
+                product.in_stock -= item.quantity
 
-            db.session.delete(item)
+                db.session.delete(item)
 
-            db.session.commit()
+                db.session.commit()
 
-            flash('Order Placed Successfully')
+                flash('Order Placed Successfully')
 
-            return "Order Placed"
+                return "Order Placed"
 
         except Exception as e:
-            print(e)
-            flash('Order not Placed')
+                print(e)
+                flash('Order not Placed')
+                return redirect('/')
+        else:
+            flash('Your cart is Empty')
             return redirect('/')
-    else:
-        flash('Your cart is Empty')
-        return redirect('/')
