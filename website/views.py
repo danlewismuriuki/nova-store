@@ -129,7 +129,7 @@ def remove_cart():
 @views.route('/place-order')
 @login_required
 def place_order():
-    customer_cart = Cart.query.filter_by(customer_links=current_user.id)
+    customer_cart = Cart.query.filter_by(customer_link=current_user.id)
     if customer_cart:
         try:
             total = 0
