@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, flash, send_from_directory, redire
 from flask_login import login_required, current_user
 from .forms import ShopItemsForm
 from werkzeug.utils import secure_filename
-from .models import Product
+from .models import Product, Orders
 from . import db
 
 admin = Blueprint('admin', __name__)
@@ -125,3 +125,12 @@ def delete_item(item_id):
         return redirect('/shop-items')
 
     return render_template('404.html')
+
+@admin.route('/view-orders')
+@login_required
+def order_view():
+    if current_user.id == 1:
+        orders = Order.query.all()
+        return render_template('views_orders.html', orders=orders)
+    return render_template('404.html')
+
