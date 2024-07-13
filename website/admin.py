@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, flash, send_from_directory, redire
 from flask_login import login_required, current_user
 from .forms import ShopItemsForm
 from werkzeug.utils import secure_filename
-from .models import Product, Orders
+from .models import Product, Order
 from . import db
 
 admin = Blueprint('admin', __name__)
@@ -134,3 +134,11 @@ def order_view():
         return render_template('views_orders.html', orders=orders)
     return render_template('404.html')
 
+
+@admin.route('/update-order/<int:order_id>', methods=['GET', 'POST'])
+@login_required
+def update_order(order_id):
+    if current_user.id == 1:
+        form = OrderForm
+        return render_template('order_update.html', form=form)
+    return render_template('404.html')
