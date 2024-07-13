@@ -140,5 +140,18 @@ def order_view():
 def update_order(order_id):
     if current_user.id == 1:
         form = OrderForm
+
+        if form.validate_on_submit():
+            status = form.order_status.data
+            order.status = status
+
+            try:
+                db.session.commit()
+                flash(f'Order {order_id} Updated successfully')
+                return redirect('/view-orders')
+            except Exception as e:
+                print(e)
+                flash(f'Order {Order_id} not updated')
+                return redirect('/view-orders')
         return render_template('order_update.html', form=form)
     return render_template('404.html')
