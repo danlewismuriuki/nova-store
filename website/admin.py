@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, flash, send_from_directory, redirect
 from flask_login import login_required, current_user
-from .forms import ShopItemsForm
+from .forms import ShopItemsForm, OrderForm
 from werkzeug.utils import secure_filename
-from .models import Product, Order
+from .models import Product, Order, Customer
 from . import db
 
 admin = Blueprint('admin', __name__)
@@ -131,7 +131,7 @@ def delete_item(item_id):
 def order_view():
     if current_user.id == 1:
         orders = Order.query.all()
-        return render_template('views_orders.html', orders=orders)
+        return render_template('view_orders.html', orders=orders)
     return render_template('404.html')
 
 
@@ -139,7 +139,7 @@ def order_view():
 @login_required
 def update_order(order_id):
     if current_user.id == 1:
-        form = OrderForm
+        form = OrderForm()
 
         if form.validate_on_submit():
             status = form.order_status.data
@@ -154,4 +154,19 @@ def update_order(order_id):
                 flash(f'Order {Order_id} not updated')
                 return redirect('/view-orders')
         return render_template('order_update.html', form=form)
+    return render_template('404.html')
+
+@admin.route('/customers')
+@login_required
+def display_customers():
+    if current_user.id == 1:
+        customers = Customer.query.all()
+        return render_template('customers.html', customers=customers)
+    return render_template('404.html')
+
+@admin.route('/admin-page')
+@login_required
+def admin_page():
+    if current_user.id == 1:
+        return render_template('admin.html')
     return render_template('404.html')
