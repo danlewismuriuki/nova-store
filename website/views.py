@@ -7,7 +7,7 @@ from intasend import APIService
 views = Blueprint('views', __name__)
 
 API_PUBLISHABLE_KEY = 'ISPubKey_test_598089fc-3570-46bc-976f-b89f6190279a'
-API_TOKEN = 'ISSecretKey_test_59006421-3a08-4ec5-bf35-af657b584982'
+API_TOKEN = 'ISSecretKey_test_091cfd4d-4d78-4354-a575-518991bbc409'
 
 
 @views.route('/')
@@ -137,8 +137,11 @@ def place_order():
                 total += item.product.current_price * item.quantity
 
             service = APIService(token=API_TOKEN, publishable_key=API_PUBLISHABLE_KEY, test=True)
-            create_order_response = service.collect.mpesa_stk_push(phone_number=+254746106100, email=current_user.email,
+            create_order_response = service.collect.mpesa_stk_push(phone_number='254746106100', email=current_user.email,
                                                                     amount=total + 200, narrative='Purchase of goods')
+            
+            print(f"Order Response: {create_order_response}")
+
             for item in customer_cart:
                 new_order = Order()
                 new_order.quantity = item.quantity
@@ -159,14 +162,20 @@ def place_order():
 
                 db.session.commit()
 
-                flash('Order Placed Successfully')
-
-                return "Order Placed"
+            flash('Order Placed Successfully')
+            return redirect('/orders')
+            
 
         except Exception as e:
                 print(e)
                 flash('Order not Placed')
                 return redirect('/')
-        else:
-            flash('Your cart is Empty')
-            return redirect('/')
+    else:
+        flash('Your cart is Empty')
+        return redirect('/')
+
+@views.route('/orders')
+@login_required
+def order():
+    orders = Order.query.filter_by(customer_link=current_user.id).all()
+    return render_template('orders.html', orders=orders)
