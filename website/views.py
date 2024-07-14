@@ -56,7 +56,7 @@ def show_cart():
     amount = 0
     for item in cart:
         amount += item.product.current_price * item.quantity
-        return render_template('cart.html', cart=cart, amount=amount, total=amount+200)
+    return render_template('cart.html', cart=cart, amount=amount, total=amount+200)
 
 @views.route('/pluscart')
 @login_required
