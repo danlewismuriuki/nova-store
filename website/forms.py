@@ -39,4 +39,4 @@ class OrderForm(FlaskForm):
                                                         ('Delivered','Delivered'),
                                                         ('Cancelled','Cancelled')
 ])
-    submit = SubmitField('Update Status')
+    update = SubmitField('Update Status')

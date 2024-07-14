@@ -143,6 +143,8 @@ def update_order(order_id):
 
         if form.validate_on_submit():
             status = form.order_status.data
+
+            order = Order.query.get(order_id)
             order.status = status
 
             try:
