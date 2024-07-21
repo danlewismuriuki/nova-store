@@ -14,7 +14,6 @@ API_TOKEN = 'ISSecretKey_test_091cfd4d-4d78-4354-a575-518991bbc409'
 def home():
 
     items = Product.query.filter_by(flash_sale=True)
-
     return render_template('home.html', items=items, cart=Cart.query.filter_by(customer_link=current_user.id).all()
                            if current_user.is_authenticated else[])
 
